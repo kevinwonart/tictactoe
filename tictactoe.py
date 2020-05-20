@@ -1,4 +1,5 @@
-# Self-teaching myself Python. I've read the importance of staying away from global variables, but this project is full of them.
+# My first public python project. Self-learning.
+#I've read the importance of staying away from global variables, but this project is full of them.
 
 def printgrid():
     global grid
