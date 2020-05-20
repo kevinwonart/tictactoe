@@ -1,3 +1,5 @@
+# Self-teaching myself Python. I've read the importance of staying away from global variables, but this project is full of them.
+
 def printgrid():
     global grid
     for i in range(len(grid)):
@@ -95,7 +97,6 @@ while gamestatus == True:
             
 print("Thanks for playing!")
 
-##Need to check if the game is going to be a tie
         
         
     
