@@ -57,27 +57,37 @@ This problem will give you a good opportunity to practice implementing a basic D
 */
 
 function findConnectedComponents(graph) {
-  let answer = [];
-  let traversedNode = new Set();
-  for(let node in graph){
+  const traversedNode = new Set();
+  const answer = [];
+  for(let node in graph) {
     if(!traversedNode.has(node)) {
-      traversedNode.add(node);
-    }
-    for(let adjNodes of graph[node]){
-
+      let component = [];
+      depthFS(node);
+      answer.push(component)
     }
   }
-
+  function depthFS(node){
+    traversedNode.add(node);
+    component.push(node);
+    for(let adjNode of graph[node]){
+      if(!traversedNode.has(adjNode)) {
+        depthFS(adjNode);
+      }
+    }
+  }
+  return answer;
 }
 
 const graph = {
-  0: ["1", "2"],
+  0: ["1", "2","8"],
   1: ["0", "2"],
   2: ["0", "1"],
   3: ["4"],
   4: ["3","7"],
   5: ["6"],
   6: ["5"],
+  7: ["4"],
+  8: ["0"],
 };
-findConnectedComponents(graph);
-//console.log(findConnectedComponents(graph));
+//findConnectedComponents(graph);
+console.log(findConnectedComponents(graph));
