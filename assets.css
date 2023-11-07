@@ -1,0 +1,33 @@
+body{
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  grid-template-rows: repeat(3, 100px);
+}
+
+.cell {
+    background-color: #e2e8f0;
+    width: 100px;
+    height: 100px;
+    border: 2px solid #000;
+    font-size: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.cell:hover{
+  background-color: #fca5a5;
+}
+
+.mark {
+  overflow: hidden;
+  display: inline;
+}

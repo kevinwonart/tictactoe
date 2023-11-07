@@ -61,7 +61,7 @@ function findConnectedComponents(graph) {
   const answer = [];
   for(let node in graph) {
     if(!traversedNode.has(node)) {
-      let component = [];
+      const component = [];
       depthFS(node);
       answer.push(component)
     }
