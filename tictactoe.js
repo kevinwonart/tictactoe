@@ -13,6 +13,7 @@ class Board {
 }
 const player1 = "x";
 const player2 = "o";
+let player = "";
 
 let turn = player1;
 const board = new Board(3,3);
@@ -39,6 +40,31 @@ function switchPlayer() {
   turn = turn === "x" ? "o" : "x";
 }
 
+function checkWin(board, player){
+  for(let i = 0; i < 3; i++) {
+    if((board[i][0] === player &&
+      board[i][1] === player &&
+      board[i][2] === player) ||
+      board[0][i] === player &&
+      board[1][i] === player &&
+      board[2][i] === player
+    ){
+      return true;
+    }
+  }
+  if(board[0][0] === player &&
+    board[1][1] === player &&
+    board[2][2] === player) {
+    return true;
+  }
+  if(board[0][2] === player &&
+    board[1][1] === player &&
+    board[2][0] === player) {
+    return true;
+  }
+}
+
+
 function isGameOver(board){
   for (let i = 0; i < 3; i++) {
     if(board[i][0] === "x" && board[i][0] === board[i][1] === board[i][2]){
@@ -64,16 +90,6 @@ function isGameOver(board){
     return true;
   }
   if(board[0][2] === "o" && board[0][2] === board[1][1] === board [2][0]){
-    return true;
-  }
-  function isBoardFilled(board){
-    for(let row of board) {
-      for(let element of row) {
-        if(element === "") {
-          return false;
-        }
-      }
-    }
     return true;
   }
 }
@@ -110,7 +126,7 @@ function evalBoard(board){
   ){
     return -1;
   }
-  }
+
   if(board[0][0] === "o" &&
     board[1][1] === "o" &&
     board[2][2] === "o") {
@@ -125,7 +141,7 @@ function evalBoard(board){
 }
 
 function miniMax(board, depth, isMax) {
-  if(isGameOver(board){
+  if(isGameOver(board)){
     return evalBoard(board);
   }
 
@@ -135,7 +151,7 @@ function miniMax(board, depth, isMax) {
       for (let col = 0; col < 3; col++){
         if(board[row][col] === ""){
           board[row][col] = "x";
-          const eval = miniMax(board, depth + 1; false);
+          const eval = miniMax(board, depth + 1, false);
           board[row][col] = "";
           maxEval = Math.max(maxEval, eval);
         }
@@ -148,7 +164,7 @@ function miniMax(board, depth, isMax) {
       for (let col = 0; j < 3; col++) {
         if (board[row][col] === ""){
           board[row][col] = "o";
-          const eval = miniMax(board, depth + 1; true);
+          const eval = miniMax(board, depth + 1, true);
           board[row][col] = "";
           minEval = Math.min(minEval, eval);
         }
@@ -160,6 +176,16 @@ function miniMax(board, depth, isMax) {
 
 function findMove(board, player){
 
+}
+function getPlayer(){
+  rl.question("Play as 'x' or 'o'?", (input) => {
+    if(input !== "x" || input !== "0"){
+      console.log("invalid input");
+      getPlayer();
+    } else{
+      player = input === "x" ? player1 : player2;
+    }
+  });
 }
 
 function play(){
@@ -193,5 +219,5 @@ function play(){
     }
   });
 }
-
+getPlayer();
 play();
