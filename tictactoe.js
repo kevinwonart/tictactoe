@@ -92,6 +92,14 @@ function isGameOver(board){
   if(board[0][2] === "o" && board[0][2] === board[1][1] === board [2][0]){
     return true;
   }
+  for(let i = 0; i < 3; i++){
+    for(let j = 0; j < 3; j++){
+      if(board[i][j] !== ""){
+        return false;
+      }
+    }
+    return true;
+  }
 }
 
 function evalBoard(board){
@@ -174,33 +182,61 @@ function miniMax(board, depth, isMax) {
     }
 }
 
-function findMove(board, player){
-
-}
-function getPlayer(){
-  rl.question("Play as 'x' or 'o'?", (input) => {
-    if(input !== "x" || input !== "0"){
-      console.log("invalid input");
-      getPlayer();
-    } else{
-      player = input === "x" ? player1 : player2;
+function getBotMove(turn){
+  if(turn === 'x'){
+    let bestMove = { row: -1, col: -1 };
+    let bestEval = -Infinty;
+    for (let i = 0; i < 3; i++){
+      for (let j = 0; j < 3; j++){
+        if(board[i][j] !== ""){
+          board[i][j] = "x";
+          const eval = minimax(board, 0, false);
+          board[i][j] = "";
+          if (eval > bestEval){
+            bestEval = eval;
+            bestMove.row = i;
+            bestMove.col = j;
+          }
+        }
+      }
     }
-  });
+    board.grid[bestMove.row][bestMove.col] = turn;
+    switchPlayer();
+  }else {
+    let bestMove = { row: -1, col: -1 };
+    let bestEval = Infinty;
+    for (let i = 0; i < 3; i++){
+      for (let j = 0; j < 3; j++){
+        if(board[i][j] !== ""){
+          board[i][j] = "o";
+          const eval = minimax(board, 0, true);
+          board[i][j] = "";
+          if (eval > bestEval){
+            bestEval = eval;
+            bestMove.row = i;
+            bestMove.col = j;
+          }
+        }
+      }
+    }
+    board.grid[bestMove.row][bestMove.col] = turn;
+    switchPlayer();
+  }
 }
 
-function play(){
+function getPlayerMove(){
   printBoard();
   rl.question(`Player ${turn} to go enter (1-9): `, (input) => {
     let move = parseInt(input);
     if(isNaN(move) || move < 1 || move > 9) {
       console.log("invalid input. Play a position (1-9)");
-      play();
+      getPlayerMove();
     }else {
       const row = Math.floor((move -1)/3);
       const col = (move -1) % 3;
       if (board.grid[row][col] === 'x' || board.grid[row][col] === 'o') {
         console.log("Invalid move. Cell is occupied");
-        play();
+        getPlayerMove();
       } else {
         board.grid[row][col] = turn;
         if(checkWin(board.grid, turn)) {
@@ -213,11 +249,25 @@ function play(){
           rl.close();
       } else {
           switchPlayer();
-          play();
+          getBotMove(turn);
         }
       }
     }
   });
 }
-getPlayer();
+
+function play(){
+    rl.question("Play as 'x' or 'o'?", (input) => {
+      if(input !== "x" && input !== "o"){
+        console.log("invalid input");
+        play();
+      } else{
+        player = input === "x" ? player1 : player2;
+        console.log("player: " + player + "\n");
+      }
+      while(!isGameOver(board.grid)){
+        getPlayerMove();
+      }
+  });
+}
 play();
