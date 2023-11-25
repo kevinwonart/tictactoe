@@ -1,8 +1,5 @@
-const readline = require('readline');
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
+const c = { log: console.log.bind(console) };
+//npm readline-sync
 
 class Board {
   constructor(rows, columns) {
@@ -13,9 +10,7 @@ class Board {
 }
 const player1 = "x";
 const player2 = "o";
-let player = "";
 
-let turn = player1;
 const board = new Board(3,3);
 function printBoard(){
   console.log(` ${board.grid[0][0]} | ${board.grid[0][1]} | ${board.grid[0][2]}`);
@@ -36,9 +31,6 @@ function isBoardFilled(board){
   return true;
 }
 
-function switchPlayer() {
-  turn = turn === "x" ? "o" : "x";
-}
 
 function checkWin(board, player){
   for(let i = 0; i < 3; i++) {
@@ -94,12 +86,12 @@ function isGameOver(board){
   }
   for(let i = 0; i < 3; i++){
     for(let j = 0; j < 3; j++){
-      if(board[i][j] !== ""){
+      if(board[i][j] === ""){
         return false;
       }
     }
-    return true;
   }
+  return true;
 }
 
 function evalBoard(board){
@@ -154,7 +146,7 @@ function miniMax(board, depth, isMax) {
   }
 
   if (isMax){
-    let maxEval = -Infinty;
+    let maxEval = -Infinity;
     for (let row = 0; row < 3; row++){
       for (let col = 0; col < 3; col++){
         if(board[row][col] === ""){
@@ -182,10 +174,10 @@ function miniMax(board, depth, isMax) {
     }
 }
 
-function getBotMove(turn){
-  if(turn === 'x'){
+function getBotMove(bot){
+  if(bot === 'x'){
     let bestMove = { row: -1, col: -1 };
-    let bestEval = -Infinty;
+    let bestEval = -Infinity;
     for (let i = 0; i < 3; i++){
       for (let j = 0; j < 3; j++){
         if(board[i][j] !== ""){
@@ -200,11 +192,11 @@ function getBotMove(turn){
         }
       }
     }
-    board.grid[bestMove.row][bestMove.col] = turn;
-    switchPlayer();
+    board.grid[bestMove.row][bestMove.col] = bot;
+    bot === "x" ? getPlayerMove("o") : getPlayerMove("x");
   }else {
     let bestMove = { row: -1, col: -1 };
-    let bestEval = Infinty;
+    let bestEval = Infinity;
     for (let i = 0; i < 3; i++){
       for (let j = 0; j < 3; j++){
         if(board[i][j] !== ""){
@@ -219,14 +211,24 @@ function getBotMove(turn){
         }
       }
     }
-    board.grid[bestMove.row][bestMove.col] = turn;
-    switchPlayer();
+    board.grid[bestMove.row][bestMove.col] = bot;
+    bot === "x" ? getPlayerMove("o") : getPlayerMove("x");
   }
 }
 
-function getPlayerMove(){
+function getPlayerMove(player){
+  if(isGameOver(board.grid)){
+    return;
+  }
+
+  const readline = require('readline');
+  const rl = readline.createInterface( {
+    input: process.stdin,
+    output: process.stdout
+  });
+
   printBoard();
-  rl.question(`Player ${turn} to go enter (1-9): `, (input) => {
+  rl.question(`Player ${player} to go enter (1-9): `, (input) => {
     let move = parseInt(input);
     if(isNaN(move) || move < 1 || move > 9) {
       console.log("invalid input. Play a position (1-9)");
@@ -238,36 +240,56 @@ function getPlayerMove(){
         console.log("Invalid move. Cell is occupied");
         getPlayerMove();
       } else {
-        board.grid[row][col] = turn;
-        if(checkWin(board.grid, turn)) {
+        board.grid[row][col] = player;
+        if(checkWin(board.grid, player)) {
           printBoard();
-          console.log(`Player ${turn} wins!`);
+          console.log(`Player ${player} wins!`);
           rl.close();
       } else if (isBoardFilled(board.grid)) {
           printBoard();
           console.log("It\'s a draw!");
           rl.close();
       } else {
-          switchPlayer();
-          getBotMove(turn);
+          rl.close();
+          player === "x" ? getBotMove("o") : getBotMove("x");
         }
       }
     }
   });
 }
 
-function play(){
-    rl.question("Play as 'x' or 'o'?", (input) => {
-      if(input !== "x" && input !== "o"){
-        console.log("invalid input");
-        play();
-      } else{
-        player = input === "x" ? player1 : player2;
-        console.log("player: " + player + "\n");
-      }
-      while(!isGameOver(board.grid)){
-        getPlayerMove();
-      }
+function getPlayer() {
+  const readline = require('readline');
+  const rl = readline.createInterface( {
+      input: process.stdin,
+      output: process.stdout
+  });
+
+  return new Promise((resolve) => {
+    const askPlayer = () => {
+      rl.question("Play as 'x' or 'o'? ", (input) => {
+        const choice = input;
+        if(choice === "x" || choice === "o"){
+          rl.close();
+          resolve(choice);
+        } else {
+          c.log("Invalid player input, 'x' or 'o'");
+          askPlayer();
+        }
+      });
+    };
+    askPlayer();
   });
 }
+
+
+function play(){
+  getPlayer()
+    .then(input => {
+      let player = input;
+      c.log(`Player Chose: ${player}`);
+      player === player1 ? getPlayerMove(player1) : getBotMove(player1);
+  });
+}
+
 play();
