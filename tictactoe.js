@@ -99,9 +99,9 @@ function evalBoard(board){
     if((board[i][0] === "x" &&
       board[i][1] === "x" &&
       board[i][2] === "x") ||
-      board[0][i] === "x" &&
+      (board[0][i] === "x" &&
       board[1][i] === "x" &&
-      board[2][i] === "x"
+      board[2][i] === "x")
     ){
       return 1;
     }
@@ -116,17 +116,17 @@ function evalBoard(board){
     board[2][0] === "x") {
       return 1;
   }
-
-  if((board[i][0] === "o" &&
-    board[i][1] === "o" &&
-    board[i][2] === "o") ||
-    board[0][i] === "o" &&
-    board[1][i] === "o" &&
-    board[2][i] === "o"
-  ){
-    return -1;
+  for(let i = 0; i < 3; i++){
+    if((board[i][0] === "o" &&
+      board[i][1] === "o" &&
+      board[i][2] === "o") ||
+      (board[0][i] === "o" &&
+      board[1][i] === "o" &&
+      board[2][i] === "o")
+    ){
+      return -1;
+    }
   }
-
   if(board[0][0] === "o" &&
     board[1][1] === "o" &&
     board[2][2] === "o") {
@@ -160,8 +160,8 @@ function miniMax(board, depth, isMax) {
     return maxEval;
   } else {
     let minEval = Infinity;
-    for (let row = 0; i < 3; row++) {
-      for (let col = 0; j < 3; col++) {
+    for (let row = 0; row < 3; row++) {
+      for (let col = 0; col < 3; col++) {
         if (board[row][col] === ""){
           board[row][col] = "o";
           const eval = miniMax(board, depth + 1, true);
@@ -175,16 +175,20 @@ function miniMax(board, depth, isMax) {
 }
 
 function getBotMove(bot){
-  if(bot === 'x'){
+  if(isGameOver(board.grid)){
+    return;
+  }
+  if(bot === "x"){
     let bestMove = { row: -1, col: -1 };
     let bestEval = -Infinity;
     for (let i = 0; i < 3; i++){
       for (let j = 0; j < 3; j++){
-        if(board[i][j] !== ""){
-          board[i][j] = "x";
-          const eval = minimax(board, 0, false);
-          board[i][j] = "";
+        if(board.grid[i][j] === ""){
+          board.grid[i][j] = "x";
+          const eval = miniMax(board.grid, 0, false);
+          board.grid[i][j] = "";
           if (eval > bestEval){
+            c.log("x: " + eval);
             bestEval = eval;
             bestMove.row = i;
             bestMove.col = j;
@@ -193,17 +197,23 @@ function getBotMove(bot){
       }
     }
     board.grid[bestMove.row][bestMove.col] = bot;
+    if(checkWin(board.grid, bot)) {
+      printBoard();
+      console.log(`Player ${bot} wins!`);
+      return;
+    }
     bot === "x" ? getPlayerMove("o") : getPlayerMove("x");
   }else {
     let bestMove = { row: -1, col: -1 };
     let bestEval = Infinity;
     for (let i = 0; i < 3; i++){
       for (let j = 0; j < 3; j++){
-        if(board[i][j] !== ""){
-          board[i][j] = "o";
-          const eval = minimax(board, 0, true);
-          board[i][j] = "";
-          if (eval > bestEval){
+        if(board.grid[i][j] === ""){
+          board.grid[i][j] = "o";
+          const eval = miniMax(board.grid, 0, true);
+          board.grid[i][j] = "";
+          if (eval < bestEval){
+            c.log("o: " + eval);
             bestEval = eval;
             bestMove.row = i;
             bestMove.col = j;
@@ -212,6 +222,11 @@ function getBotMove(bot){
       }
     }
     board.grid[bestMove.row][bestMove.col] = bot;
+    if(checkWin(board.grid, bot)) {
+      printBoard();
+      console.log(`Player ${bot} wins!`);
+      return;
+    }
     bot === "x" ? getPlayerMove("o") : getPlayerMove("x");
   }
 }
@@ -232,13 +247,15 @@ function getPlayerMove(player){
     let move = parseInt(input);
     if(isNaN(move) || move < 1 || move > 9) {
       console.log("invalid input. Play a position (1-9)");
-      getPlayerMove();
+      rl.close();
+      getPlayerMove(player);
     }else {
       const row = Math.floor((move -1)/3);
       const col = (move -1) % 3;
       if (board.grid[row][col] === 'x' || board.grid[row][col] === 'o') {
         console.log("Invalid move. Cell is occupied");
-        getPlayerMove();
+        rl.close();
+        getPlayerMove(player);
       } else {
         board.grid[row][col] = player;
         if(checkWin(board.grid, player)) {
@@ -293,3 +310,4 @@ function play(){
 }
 
 play();
+c.log("game over");
