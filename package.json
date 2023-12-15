@@ -1,8 +1,37 @@
 {
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
   "dependencies": {
     "next": "^14.0.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "readline-sync": "^1.4.10"
-  }
+  },
+  "name": "tictactoe",
+  "description": "tictactoe using javascript",
+  "version": "1.0.0",
+  "main": "main.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kevinwonart/tictactoe.git"
+  },
+  "keywords": [
+    "tictactoe",
+    "react",
+    "minimax",
+    "nextjs",
+    "javascript",
+    "webapp"
+  ],
+  "author": "kevinwonart",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kevinwonart/tictactoe/issues"
+  },
+  "homepage": "https://github.com/kevinwonart/tictactoe#readme"
 }
