@@ -1,11 +1,13 @@
 import React from 'react';
-import Board from '..src/Board.js'
+import Board from '../src/components/Board'
 
-export default function Page() {
-  return {
+function Page() {
+  return (
     <div>
+      <h1>TicTacToe</h1>
       <Board />
     </div>
-  };
+  );
 }
 
+export default Page;
