@@ -1,18 +1,38 @@
-import React from 'react';
+'use client'
+
+import React, { useState } from 'react';
 import styles from './Board.css';
 
+const player1 = "/images/x.png";
+const player2 = "/images/o.png";
+
 const Board = () => {
+  
+  let move = player1;
+  const [currentPlayer, setCurrentPlayer] = useState(player1);
+  const [tiles, setTiles] = useState(Array(9).fill(null));
+
+  const handleClick = (index) => {
+    if(tiles[index] === null) {
+      const newTiles = [...tiles];
+      newTiles[index] = currentPlayer;
+      setTiles(newTiles);
+      setCurrentPlayer(currentPlayer === player1 ? player2 : player1);
+    }
+  };
+
   return (
     <div className="board">
-      <button class="tile" id="tile1"></button>
-      <button class="tile" id="tile2"></button>
-      <button class="tile" id="tile3"></button>
-      <button class="tile" id="tile4"></button>
-      <button class="tile" id="tile5"></button>
-      <button class="tile" id="tile6"></button>
-      <button class="tile" id="tile7"></button>
-      <button class="tile" id="tile8"></button>
-      <button class="tile" id="tile9"></button>
+      {tiles.map((onClickImage, index) => (
+        <button
+          key={index}
+          className="tile"
+          id={`tile${index}`}
+          onClick={() => handleClick(index)}
+        >
+          {onClickImage && <img src={onClickImage}/>}
+        </button>
+      ))}
     </div>
   );
 };
