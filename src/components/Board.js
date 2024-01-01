@@ -9,7 +9,8 @@ const x = "/images/x.png";
 const o = "/images/o.png";
 const player1 = '/images/x.png';
 const player2 = '/images/o.png';
-function copyBoard(originalBoard){
+
+function copyBoard(originalBoard) {
   let copiedBoard = originalBoard.map(array => [...array]);
   for(let i = 0; i < copiedBoard.length; i++) {
       for(let j = 0; j < copiedBoard[i].length; j++){
@@ -17,6 +18,8 @@ function copyBoard(originalBoard){
           copiedBoard[i][j] = "x";
         if (copiedBoard[i][j] === "/images/o.png")
           copiedBoard[i][j] = "o";
+        if (copiedBoard[i][j] === null)
+          copiedBoard[i][j] = "";
       }
     }
   return copiedBoard;
@@ -37,8 +40,7 @@ const Board = () => {
       const newBoard = board.map(array => [...array]);
       newBoard[row][col] = currentPlayer;
       setBoard(newBoard);
-      setCurrentPlayer(currentPlayer === player1 ? player2 : player1);
-      setNext(copyBoard(newBoard), botMove);
+      setBoard(setNext(copyBoard(newBoard), botMove));
     }
   };
   
