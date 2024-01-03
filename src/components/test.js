@@ -173,7 +173,6 @@ function getBotMove(board, bot){
     }
     board[bestMove.row][bestMove.col] = bot;
     if(checkWin(board, bot)) {
-      console.log(`Player ${bot} wins!`);
       return;
     }else if (isBoardFilled(board)) {
       console.log("It\'s a draw!");
@@ -201,10 +200,9 @@ function getBotMove(board, bot){
     board[bestMove.row][bestMove.col] = bot;
     console.log(board);
     if(checkWin(board, bot)) {
-      console.log(`Player ${bot} wins!`);
       return;
     }
-    return board;
+    return renderBoard(board);
   }
 }
 
