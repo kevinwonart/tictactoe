@@ -198,6 +198,7 @@ function getBotMove(board, bot){
       }
     }
     board[bestMove.row][bestMove.col] = bot;
+    console.log("minimax board: ");
     console.log(board);
     if(checkWin(board, bot)) {
       return;
@@ -221,6 +222,10 @@ function renderBoard(board) {
   return renderedBoard;
 }
 export const setNext = (board, bot) => {
+  if(bot === "/images/x.png"){
+    console.log("setNext pass success. Board: ");
+    console.log(board);
+  }
   getBotMove(board, bot);
   return(renderBoard(board));
 } 

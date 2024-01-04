@@ -2,13 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import styles from './Board.css';
-import * as MiniMax from './minimax';
 import { setNext } from './test';
+import Scoreboard from './Scoreboard/Scoreboard';
 
 const x = "/images/x.png";
 const o = "/images/o.png";
-const player1 = '/images/x.png';
-const player2 = '/images/o.png';
 
 function copyBoard(originalBoard) {
   let copiedBoard = originalBoard.map(array => [...array]);
@@ -26,7 +24,6 @@ function copyBoard(originalBoard) {
 }
 
 function checkWin(board, player){
-  console.log("print palyer in checkwin function: " + player);
   for(let i = 0; i < 3; i++) {
     if((board[i][0] === player &&
       board[i][1] === player &&
@@ -63,38 +60,58 @@ function boardFilled(board){
 
 
 const Board = () => {
-  let humanMove = player1;
-  let botMove = player1 === x ? "o" : "x";
   const initialBoard= Array.from({ length: 3 }, () => new Array(3).fill(null));
-  const [currentPlayer, setCurrentPlayer] = useState(player1);
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [playerMove, setPlayerMove] = useState(x);
+  const [botMove, setBotMove] = useState(o);
   const [board, setBoard] = useState(initialBoard);
-  const [scoreCard, setScoreCard] = useState( { human : 0, bot : 0, draw : 0 } );
-  useEffect(() => {
-  }, [boardFilled]);
+  const [playerScore, setPlayerScore] = useState(0);
+  const [botScore, setBotScore] = useState(0);
+  const [drawScore, setDrawScore] = useState(0);
 
+  const updateScoreboard = ({ playerScore, botScore, drawScore }) =>{
+    
+  }
   const handleClick = (row, col) => {
-    if(board[row][col] === null) {
-      let newBoard = board.map(array => [...array]);
-      newBoard[row][col] = currentPlayer;
-      setBoard(newBoard);
-      if(checkWin(newBoard, humanMove)){
-        console.log("x wins");
-        newBoard = initialBoard;
+    if(isGameOver){
+      setIsGameOver(false);
+      setBoard(initialBoard);
+      if(botMove === x) {
+        let newBoard = initialBoard;
+        console.log("Initialboard before passing minimax: ");
+        console.log(initialBoard);
+        newBoard = setNext(copyBoard(newBoard), botMove);
         setBoard(newBoard);
       }
-      setBoard(setNext(copyBoard(newBoard), botMove));
-      console.log(newBoard);
+    }else if (board[row][col] === null) {
+      let newBoard = board.map(array => [...array]);
+      newBoard[row][col] = playerMove;
+      setBoard(newBoard);
+      if(checkWin(newBoard, playerMove)){
+        //player++
+        setIsGameOver(true);
+        setPlayerMove(playerMove === x ? o : x); 
+        setBotMove(botMove === x ? o : x); 
+        //win animation
+      }
+      newBoard = setNext(copyBoard(newBoard), botMove);
+      setBoard(newBoard);
       if(checkWin(newBoard, botMove)){
-        console.log("o wins");
-        newBoard = initialBoard;
-        setBoard(newBoard);
-        console.log("another printline");
+        //bot++
+        setIsGameOver(true);
+        setPlayerMove(playerMove === x ? o : x); 
+        setBotMove(botMove === x ? o : x); 
+        //win animation
       }
     }
     if(boardFilled(board)){
       console.log("game is a draw");
+      //draw++
       newBoard = initialBoard;
-      setBoard(newBoard);
+      setIsGameOver(true);
+      setPlayerMove(playerMove === x ? o : x); 
+      setBotMove(botMove === x ? o : x); 
+      //lose animation
     }
   };
   
