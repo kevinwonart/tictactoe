@@ -3,10 +3,7 @@
 import React, { useState } from 'react';
 import styles from './Scoreboard.css';
 
-const Scoreboard = () => {
-  const [playerScore, setPlayerScore] = useState(0);
-  const [botScore, setBotScore] = useState(0);
-  const [drawScore, setDrawScore] = useState(0);
+const Scoreboard = ({ playerScore, drawScore, botScore }) => {
 
   return (
     <div className="scoreboard">

@@ -1,13 +1,11 @@
 import React from 'react';
-import Board from '../src/components/Board'
-import Scoreboard from '../src/components/Scoreboard/Scoreboard'
+import Game from '../src/components/Game'
 
 function Page() {
   return (
     <div>
       <h1></h1>
-      <Board />
-      <Scoreboard />
+      <Game />
     </div>
   );
 }

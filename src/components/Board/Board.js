@@ -2,13 +2,15 @@
 
 import React, { useEffect, useState } from 'react';
 import styles from './Board.css';
-import { setNext } from './test';
-import Scoreboard from './Scoreboard/Scoreboard';
+import { setMiniMax } from './Minimax';
+import Scoreboard from '../Scoreboard/Scoreboard';
 
 const x = "/images/x.png";
 const o = "/images/o.png";
 
 function copyBoard(originalBoard) {
+  console.log("board passed to copyBoard() but not copied");
+  console.log(originalBoard);
   let copiedBoard = originalBoard.map(array => [...array]);
   for(let i = 0; i < copiedBoard.length; i++) {
       for(let j = 0; j < copiedBoard[i].length; j++){
@@ -20,6 +22,8 @@ function copyBoard(originalBoard) {
           copiedBoard[i][j] = "";
       }
     }
+  console.log("After copying board in inside copyBoard()");
+  console.log(copiedBoard);
   return copiedBoard;
 }
 
@@ -59,19 +63,13 @@ function boardFilled(board){
 }
 
 
-const Board = () => {
+const Board = ({ setPlayerScore, setDrawScore, setBotScore }) => {
   const initialBoard= Array.from({ length: 3 }, () => new Array(3).fill(null));
   const [isGameOver, setIsGameOver] = useState(false);
   const [playerMove, setPlayerMove] = useState(x);
   const [botMove, setBotMove] = useState(o);
   const [board, setBoard] = useState(initialBoard);
-  const [playerScore, setPlayerScore] = useState(0);
-  const [botScore, setBotScore] = useState(0);
-  const [drawScore, setDrawScore] = useState(0);
 
-  const updateScoreboard = ({ playerScore, botScore, drawScore }) =>{
-    
-  }
   const handleClick = (row, col) => {
     if(isGameOver){
       setIsGameOver(false);
@@ -80,7 +78,8 @@ const Board = () => {
         let newBoard = initialBoard;
         console.log("Initialboard before passing minimax: ");
         console.log(initialBoard);
-        newBoard = setNext(copyBoard(newBoard), botMove);
+        newBoard = copyBoard(newBoard);
+        newBoard = setMiniMax(copyBoard(newBoard), botMove);
         setBoard(newBoard);
       }
     }else if (board[row][col] === null) {
@@ -88,26 +87,35 @@ const Board = () => {
       newBoard[row][col] = playerMove;
       setBoard(newBoard);
       if(checkWin(newBoard, playerMove)){
-        //player++
+        setPlayerScore(currentScore => currentScore + 1);
         setIsGameOver(true);
         setPlayerMove(playerMove === x ? o : x); 
         setBotMove(botMove === x ? o : x); 
         //win animation
       }
-      newBoard = setNext(copyBoard(newBoard), botMove);
+      /* RECREATING ANOTHER BOARD BECAUSE THE STATE OF THE ARRAY GETS AFFECTED
+       * IN THE MINIMAX BEFORE THE COPYING OF THE ARRAY GETS DONE---
+       */
+
+      let miniMaxBoard = newBoard.map(array => [...array]);
+      miniMaxBoard = copyBoard(miniMaxBoard);
+      newBoard = miniMaxBoard.map(array => [...array]);
+      newBoard = setMiniMax(newBoard, botMove);
       setBoard(newBoard);
       if(checkWin(newBoard, botMove)){
-        //bot++
+        setBotScore(currentScore => currentScore + 1);
         setIsGameOver(true);
         setPlayerMove(playerMove === x ? o : x); 
         setBotMove(botMove === x ? o : x); 
         //win animation
       }
+      console.log("end of handleClick");
+      console.log(newBoard);
     }
     if(boardFilled(board)){
       console.log("game is a draw");
-      //draw++
-      newBoard = initialBoard;
+      setDrawScore(currentScore => currentScore + 1);
+      setBoard(initialBoard);
       setIsGameOver(true);
       setPlayerMove(playerMove === x ? o : x); 
       setBotMove(botMove === x ? o : x); 

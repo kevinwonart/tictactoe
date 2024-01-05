@@ -226,7 +226,7 @@ export const setMiniMax = (board, bot) => {
     console.log("miniMax pass success. Board: ");
     console.log(board);
   }
-  console.log("board minimax, in minimax pass");
+  console.log("board minimax, in minimax pass before get bot move");
   console.log(board);
   getBotMove(board, bot);
   return(renderBoard(board));

@@ -9,7 +9,6 @@ function isBoardFilled(board){
   return true;
 }
 
-
 function checkWin(board, player){
   for(let i = 0; i < 3; i++) {
     if((board[i][0] === player &&
@@ -33,7 +32,6 @@ function checkWin(board, player){
     return true;
   }
 }
-
 
 function isGameOver(board){
   for (let i = 0; i < 3; i++) {
@@ -135,7 +133,6 @@ function miniMax(board, isMax) {
         }
       }
     }
-    //c.log(maxEval);
     return maxEval;
   } else {
     let minEval = Infinity;
@@ -153,8 +150,8 @@ function miniMax(board, isMax) {
     }
 }
 
-function getBotMove(bot){
-  if(isGameOver(board.grid)){
+function getBotMove(board, bot){
+  if(isGameOver(board)){
     return;
   }
   if(bot === "x"){
@@ -162,10 +159,10 @@ function getBotMove(bot){
     let bestEval = -Infinity;
     for (let i = 0; i < 3; i++){
       for (let j = 0; j < 3; j++){
-        if(board.grid[i][j] === ""){
-          board.grid[i][j] = "x";
-          const score = miniMax(board.grid, false);
-          board.grid[i][j] = "";
+        if(board[i][j] === ""){
+          board[i][j] = "x";
+          const score = miniMax(board, false);
+          board[i][j] = "";
           if (score > bestEval){
             bestEval = score;
             bestMove.row = i;
@@ -174,13 +171,10 @@ function getBotMove(bot){
         }
       }
     }
-    board.grid[bestMove.row][bestMove.col] = bot;
-    if(checkWin(board.grid, bot)) {
-      printBoard();
-      console.log(`Player ${bot} wins!`);
+    board[bestMove.row][bestMove.col] = bot;
+    if(checkWin(board, bot)) {
       return;
-    }else if (isBoardFilled(board.grid)) {
-      printBoard();
+    }else if (isBoardFilled(board)) {
       console.log("It\'s a draw!");
   } else {
       bot === "x" ? getPlayerMove("o") : getPlayerMove("x");
@@ -190,10 +184,10 @@ function getBotMove(bot){
     let bestEval = Infinity;
     for (let i = 0; i < 3; i++){
       for (let j = 0; j < 3; j++){
-        if(board.grid[i][j] === ""){
-          board.grid[i][j] = "o";
-          const score = miniMax(board.grid, true);
-          board.grid[i][j] = "";
+        if(board[i][j] === ""){
+          board[i][j] = "o";
+          const score = miniMax(board, true);
+          board[i][j] = "";
           if (score < bestEval){
             bestEval = score;
 
@@ -203,13 +197,37 @@ function getBotMove(bot){
         }
       }
     }
-    board.grid[bestMove.row][bestMove.col] = bot;
-    if(checkWin(board.grid, bot)) {
-      printBoard();
-      console.log(`Player ${bot} wins!`);
+    board[bestMove.row][bestMove.col] = bot;
+    console.log("board after running minimax");
+    console.log(board);
+    if(checkWin(board, bot)) {
       return;
     }
-    bot === "x" ? getPlayerMove("o") : getPlayerMove("x");
+    return renderBoard(board);
   }
 }
 
+function renderBoard(board) {
+  let renderedBoard = board.map(array => [...array]);
+  for(let i = 0; i < renderedBoard.length; i++) {
+      for(let j = 0; j < renderedBoard[i].length; j++){
+        if (renderedBoard[i][j] === "x")
+          renderedBoard[i][j] = "/images/x.png";
+        if (renderedBoard[i][j] === "o")
+          renderedBoard[i][j] = "/images/o.png";
+        if (renderedBoard[i][j] === "")
+          renderedBoard[i][j] = null;
+      }
+    }
+  return renderedBoard;
+}
+export const setMiniMax = (board, bot) => {
+  if(bot === "/images/x.png"){
+    console.log("miniMax pass success. Board: ");
+    console.log(board);
+  }
+  console.log("board minimax, in minimax pass before get bot move");
+  console.log(board);
+  getBotMove(board, bot);
+  return(renderBoard(board));
+} 
