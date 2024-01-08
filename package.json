@@ -3,7 +3,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "output": "next build && next output"
   },
   "dependencies": {
     "next": "^14.0.4",
@@ -15,7 +16,6 @@
   "description": "tictactoe using javascript",
   "version": "1.0.0",
   "main": "main.js",
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kevinwonart/tictactoe.git"

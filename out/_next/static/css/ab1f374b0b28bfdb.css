@@ -1,0 +1,1 @@
+.board{width:100vh;height:100vh;background-image:url(/images/board.png);background-position:50%;background-repeat:no-repeat;background-size:contain;justify-content:center;align-items:center}.tile{position:relative;top:75px;left:75px;width:260px;height:260px;background:transparent;border:none;cursor:pointer}
