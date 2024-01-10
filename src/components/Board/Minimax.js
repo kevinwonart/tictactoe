@@ -222,12 +222,14 @@ function renderBoard(board) {
   return renderedBoard;
 }
 export const setMiniMax = (board, bot) => {
-  if(bot === "/images/x.png"){
-    console.log("miniMax pass success. Board: ");
-    console.log(board);
+  let botMove = "x";
+  if(bot === "/images/o.png"){
+    botMove = "o";
   }
   console.log("board minimax, in minimax pass before get bot move");
+  console.log("somethign is wrong here");
   console.log(board);
-  getBotMove(board, bot);
+  console.log(botMove);
+  getBotMove(board, botMove);
   return(renderBoard(board));
 } 

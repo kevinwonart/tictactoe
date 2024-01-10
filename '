@@ -1,10 +1,9 @@
 'use client'
 
-const c = { log: console.log.bind(console) };
-import React, { useLayoutEffect, useState, useRef } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import styles from './Board.css';
 import { setMiniMax } from './Minimax';
-//import Scoreboard from '../Scoreboard/Scoreboard';
+import Scoreboard from '../Scoreboard/Scoreboard';
 
 const x = "/images/x.png";
 const o = "/images/o.png";
@@ -62,16 +61,15 @@ function boardFilled(board){
 }
 
 
-const Board = ({/* setPlayerScore, setDrawScore, setBotScore */}) => {
+const Board = ({ setPlayerScore, setDrawScore, setBotScore }) => {
   const initialBoard= Array.from({ length: 3 }, () => new Array(3).fill(null));
   const [isGameOver, setIsGameOver] = useState(false);
   const [player, setPlayer] = useState(x);
-  const [playerMove, setPlayerMove] = useState(null);
+  const [playerMove, setPlayerMove] = useState([null, null]);
   const [bot, setBot] = useState(o);
   const [board, setBoard] = useState(initialBoard);
 
   const handleClick = (row, col) => {
-    /*
     if(isGameOver){
       setIsGameOver(false);
       setBoard(initialBoard);
@@ -80,7 +78,6 @@ const Board = ({/* setPlayerScore, setDrawScore, setBotScore */}) => {
         setBoard(newBoard);
       }
     }else if (board[row][col] === null) {
-      c.log("handleClick");
       let newBoard = board.map(array => [...array]);
       newBoard[row][col] = player;
       setBoard(newBoard);
@@ -92,7 +89,16 @@ const Board = ({/* setPlayerScore, setDrawScore, setBotScore */}) => {
         setBot(bot === x ? o : x); 
         //win animation
       }
+      setBoard(newBoard);
+      if(checkWin(newBoard, bot)){
+        setBotScore(currentScore => currentScore + 1);
+        setIsGameOver(true);
+        setPlayer(player === x ? o : x); 
+        setBot(bot === x ? o : x); 
+        //win animation
+      }
       console.log("end of handleClick");
+      console.log(newBoard);
     }
     if(boardFilled(board)){
       console.log("game is a draw");
@@ -103,20 +109,12 @@ const Board = ({/* setPlayerScore, setDrawScore, setBotScore */}) => {
       setBot(bot === x ? o : x); 
       //lose animation
     }
-  */
   };
 
-  const firstUpdate = useRef(true);
-
   useLayoutEffect(() => {
-    console.log("Use Layout Effect");
-    c.log(firstUpdate.current);
-    if (firstUpdate.current) {
-      firstUpdate.current = false;
-      c.log(firstUpdate.current);
-      return;
-    }
     if(!isGameOver) {
+      let newBoard = setMiniMax(copyBoard(board), bot);
+      console.log(newBoard);
     }
   }, [playerMove]);
 
