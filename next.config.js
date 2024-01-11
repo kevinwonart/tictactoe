@@ -13,4 +13,7 @@ const nextConfig = {
   // distDir: 'dist',
 }
  
-module.exports = nextConfig
+module.exports = {
+  nextConfig,
+  reactStrictMode: false,
+}

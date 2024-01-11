@@ -1,7 +1,7 @@
 'use client'
 
 const c = { log: console.log.bind(console) };
-import React, { useLayoutEffect, useState, useRef } from 'react';
+import React, { useLayoutEffect, useState, useRef, useEffect } from 'react';
 import styles from './Board.css';
 import { setMiniMax } from './Minimax';
 //import Scoreboard from '../Scoreboard/Scoreboard';
@@ -61,8 +61,7 @@ function boardFilled(board){
   return true;
 }
 
-
-const Board = ({/* setPlayerScore, setDrawScore, setBotScore */}) => {
+const Board = ({ setPlayerScore, setDrawScore, setBotScore }) => {
   const initialBoard= Array.from({ length: 3 }, () => new Array(3).fill(null));
   const [isGameOver, setIsGameOver] = useState(false);
   const [player, setPlayer] = useState(x);
@@ -71,52 +70,86 @@ const Board = ({/* setPlayerScore, setDrawScore, setBotScore */}) => {
   const [board, setBoard] = useState(initialBoard);
 
   const handleClick = (row, col) => {
-    /*
-    if(isGameOver){
-      setIsGameOver(false);
-      setBoard(initialBoard);
-      if(bot === x) {
-        let newBoard = setMiniMax(copyBoard(newBoard), bot);
-        setBoard(newBoard);
-      }
-    }else if (board[row][col] === null) {
-      c.log("handleClick");
-      let newBoard = board.map(array => [...array]);
+    let newBoard = board.map(array => [...array]);
+    if (board[row][col] === null) {
+      c.log(newBoard);
       newBoard[row][col] = player;
       setBoard(newBoard);
-      setPlayerMove([row,col]);
-      if(checkWin(newBoard, player)){
-        setPlayerScore(currentScore => currentScore + 1);
-        setIsGameOver(true);
-        setPlayer(player === x ? o : x); 
-        setBot(bot === x ? o : x); 
-        //win animation
-      }
-      console.log("end of handleClick");
     }
-    if(boardFilled(board)){
-      console.log("game is a draw");
-      setDrawScore(currentScore => currentScore + 1);
-      setBoard(initialBoard);
+    if (checkWin(board, player)) {
       setIsGameOver(true);
-      setPlayer(player === x ? o : x); 
-      setBot(bot === x ? o : x); 
-      //lose animation
+      /*
+      setPlayerScore(currentScore => currentScore + 1);
+      setIsGameOver(true);
+      setPlayer(player === x ? o : x);
+      setBot(bot === x ? o : x);
+      */
+    } else if (boardFilled(board)) {
+      setIsGameOver(true);
+      /*
+      setDrawScore(currentScore => currentScore + 1);
+      setIsGameOver(true);
+      setPlayer(player === x ? o : x);
+      setBot(bot === x ? o : x);
+      */
+    } else {
+      setPlayerMove([row, col]);
     }
-  */
   };
-
-  const firstUpdate = useRef(true);
-
-  useLayoutEffect(() => {
-    console.log("Use Layout Effect");
-    c.log(firstUpdate.current);
-    if (firstUpdate.current) {
-      firstUpdate.current = false;
-      c.log(firstUpdate.current);
+  
+  const uEUpdate = useRef(true);
+  useEffect(() => {
+    console.log("Use Effect");
+    if (uEUpdate.current) {
+      uEUpdate.current = false;
       return;
     }
-    if(!isGameOver) {
+    if (checkWin(board, bot) && isGameOver){
+      c.log("a");
+      setBotScore(currentScore => currentScore + 1);
+      setPlayer(player === x ? o : x);
+      setBot(bot === x ? o : x);
+      setBoard(initialBoard);
+    } else if(checkWin(board, player) && isGameOver){
+      c.log("b");
+      setPlayerScore(currentScore => currentScore + 1);
+      setPlayer(player === x ? o : x);
+      setBot(bot === x ? o : x);
+      setBoard(initialBoard);
+    } else if(boardFilled(board) && !checkWin(board, bot) && !checkWin(board, player)){
+      c.log("c");
+      setDrawScore(currentScore => currentScore + 1);
+      setPlayer(player === x ? o : x);
+      setBot(bot === x ? o : x);
+      setBoard(initialBoard);
+    }
+    if(isGameOver){
+      setIsGameOver(false);
+    }
+  }, [isGameOver]);
+
+  const firstUpdate = useRef(true);
+  useLayoutEffect(() => {
+    console.log("Use Layout Effect");
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
+      return;
+    }
+    if(!isGameOver && playerMove) {
+      let newBoard = copyBoard(board);
+      c.log("new board");
+      c.log(newBoard);
+      let botMove = setMiniMax(newBoard, bot);
+      c.log("bot move: ");
+      c.log(botMove);
+      newBoard = board.map(array => [...array]);
+      newBoard[botMove.row][botMove.col] = bot;
+      setBoard(newBoard);
+      if(checkWin(newBoard, bot)){
+        setIsGameOver(true);
+      } else if (boardFilled(board)){
+        setIsGameOver(true);
+      }
     }
   }, [playerMove]);
 

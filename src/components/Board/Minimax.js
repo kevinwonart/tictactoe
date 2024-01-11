@@ -171,14 +171,9 @@ function getBotMove(board, bot){
         }
       }
     }
-    board[bestMove.row][bestMove.col] = bot;
-    if(checkWin(board, bot)) {
-      return;
-    }else if (isBoardFilled(board)) {
-      console.log("It\'s a draw!");
-  } else {
-      bot === "x" ? getPlayerMove("o") : getPlayerMove("x");
-    }
+    console.log("pass success");
+    console.log(bestMove);
+    return bestMove;
   }else {
     let bestMove = { row: -1, col: -1 };
     let bestEval = Infinity;
@@ -197,39 +192,33 @@ function getBotMove(board, bot){
         }
       }
     }
-    board[bestMove.row][bestMove.col] = bot;
-    console.log("board after running minimax");
-    console.log(board);
-    if(checkWin(board, bot)) {
-      return;
-    }
-    return renderBoard(board);
+    console.log("pass success");
+    return bestMove;
   }
 }
 
-function renderBoard(board) {
-  let renderedBoard = board.map(array => [...array]);
-  for(let i = 0; i < renderedBoard.length; i++) {
-      for(let j = 0; j < renderedBoard[i].length; j++){
-        if (renderedBoard[i][j] === "x")
-          renderedBoard[i][j] = "/images/x.png";
-        if (renderedBoard[i][j] === "o")
-          renderedBoard[i][j] = "/images/o.png";
-        if (renderedBoard[i][j] === "")
-          renderedBoard[i][j] = null;
+function copyBoard(originalBoard) {
+  let newBoard = Array.from({ length: 3 }, () => new Array(3).fill(null));
+  for(let i = 0; i < originalBoard.length; i++) {
+      for(let j = 0; j < originalBoard[i].length; j++){
+        if (originalBoard[i][j] === "/images/x.png")
+          newBoard[i][j] = "x";
+        if (originalBoard[i][j] === "/images/o.png")
+          newBoard[i][j] = "o";
+        if (originalBoard[i][j] === null)
+          newBoard[i][j] = "";
       }
     }
-  return renderedBoard;
+  return newBoard;
 }
+
 export const setMiniMax = (board, bot) => {
   let botMove = "x";
   if(bot === "/images/o.png"){
     botMove = "o";
   }
-  console.log("board minimax, in minimax pass before get bot move");
-  console.log("somethign is wrong here");
+  console.log("MM Board: ");
   console.log(board);
-  console.log(botMove);
-  getBotMove(board, botMove);
-  return(renderBoard(board));
+  let bestMove = { row: -1, col: -1 };
+  return getBotMove(board, botMove);
 } 
