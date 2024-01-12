@@ -11,8 +11,8 @@ const Game = () => {
   
   return (
     <div>
-      <Board setPlayerScore={setPlayerScore} setDrawScore={setDrawScore} setBotScore={setBotScore} />
       <Scoreboard playerScore={playerScore} drawScore={drawScore} botScore={botScore} />
+      <Board setPlayerScore={setPlayerScore} setDrawScore={setDrawScore} setBotScore={setBotScore} />
     </div>
   );
 };

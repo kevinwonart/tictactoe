@@ -1,0 +1,16 @@
+@font-face {
+  font-family: "kw-font";
+  src: url("/fonts/Kwhandwritten-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+.scoreboard {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.score {
+  width: 100px;
+}

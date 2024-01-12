@@ -124,11 +124,14 @@ const Board = ({ setPlayerScore, setDrawScore, setBotScore }) => {
       c.log(newBoard);
       setBoard(newBoard);
     }
-    if (checkWin(board, player)) {
+    c.log("board before checking condition after playermove");
+    c.log(board);
+    if(boardFilled(newBoard) && !checkWin(newBoard, bot) && !checkWin(newBoard, player)){
+      c.log("is spaghetti");
       setIsGameOver(true);
-    } else if (boardFilled(board)) {
-      setIsGameOver(true);
-    } else {
+      return;
+    }
+    else {
       c.log("here's the problem");
       setPlayerMove([row, col]);
     }
@@ -192,7 +195,8 @@ const Board = ({ setPlayerScore, setDrawScore, setBotScore }) => {
       setBoard(newBoard);
       if(checkWin(newBoard, bot)){
         setIsGameOver(true);
-      } else if (boardFilled(board)){
+      } else if (boardFilled(newBoard)){
+        setDrawScore(currentScore => currentScore + 1);
         setIsGameOver(true);
       }
     }
