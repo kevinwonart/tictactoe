@@ -26,6 +26,25 @@ function copyBoard(originalBoard) {
   return newBoard;
 }
 
+function returnBoard(copiedBoard){
+  let newBoard = Array.from({ length: 3 }, () => new Array(3).fill(null));
+  for(let i = 0; i < copiedBoard.length; i++) {
+    for(let j = 0; j < copiedBoard[i].length; j++) {
+      if (copiedBoard[i][j] === ""){
+        c.log("pass null");
+        newBoard[i][j] = null;
+        c.log(newBoard);
+      } else {
+        newBoard[i][j] = copiedBoard[i][j];
+      }
+    }
+  }
+  c.log("reutrn Board");
+  c.log(newBoard);
+  c.log("copied Board");
+  c.log(copiedBoard);
+  return newBoard;
+}
 function checkWin(board, player){
   for(let i = 0; i < 3; i++) {
     if((board[i][0] === player &&
@@ -48,12 +67,13 @@ function checkWin(board, player){
     board[2][0] === player) {
     return true;
   }
+  return false;
 }
 
 function boardFilled(board){
   for(let row of board) {
     for(let element of row) {
-      if(element === null) {
+      if(element === '' || element === null) {
         return false;
       }
     }
@@ -64,35 +84,52 @@ function boardFilled(board){
 const Board = ({ setPlayerScore, setDrawScore, setBotScore }) => {
   const initialBoard= Array.from({ length: 3 }, () => new Array(3).fill(null));
   const [isGameOver, setIsGameOver] = useState(false);
+  const [gameOverProcessed, setGameOverProcessed] = useState(false);
   const [player, setPlayer] = useState(x);
   const [playerMove, setPlayerMove] = useState(null);
   const [bot, setBot] = useState(o);
   const [board, setBoard] = useState(initialBoard);
 
   const handleClick = (row, col) => {
+    c.log("Game over processed state at start of handleClick: " + gameOverProcessed);
+    if(gameOverProcessed) {
+      if(bot === x){
+        let newBoard = board.map(array => [...array]);
+        newBoard = copyBoard(initialBoard);
+        let botMove = setMiniMax(newBoard, bot);
+        c.log("botMove");
+        c.log(botMove);
+        newBoard[botMove.row][botMove.col] = bot;
+        newBoard = returnBoard(newBoard);
+        c.log("GameOverprocessed Passed: " + gameOverProcessed);
+        c.log("bot in gameoverprocessed : " + bot);
+        setIsGameOver(false);
+        setGameOverProcessed(false);
+        setBoard(newBoard);
+        c.log("bot first move: new board and board: ");
+        c.log(newBoard);
+        c.log(board);
+        return;
+      } else{
+        setBoard(initialBoard);
+        setIsGameOver(false);
+        setGameOverProcessed(false);
+        return;
+      }
+    }
     let newBoard = board.map(array => [...array]);
     if (board[row][col] === null) {
-      c.log(newBoard);
       newBoard[row][col] = player;
+      c.log("player onclick board");
+      c.log(newBoard);
       setBoard(newBoard);
     }
     if (checkWin(board, player)) {
       setIsGameOver(true);
-      /*
-      setPlayerScore(currentScore => currentScore + 1);
-      setIsGameOver(true);
-      setPlayer(player === x ? o : x);
-      setBot(bot === x ? o : x);
-      */
     } else if (boardFilled(board)) {
       setIsGameOver(true);
-      /*
-      setDrawScore(currentScore => currentScore + 1);
-      setIsGameOver(true);
-      setPlayer(player === x ? o : x);
-      setBot(bot === x ? o : x);
-      */
     } else {
+      c.log("here's the problem");
       setPlayerMove([row, col]);
     }
   };
@@ -100,31 +137,37 @@ const Board = ({ setPlayerScore, setDrawScore, setBotScore }) => {
   const uEUpdate = useRef(true);
   useEffect(() => {
     console.log("Use Effect");
+    console.log(board);
+    c.log("boardFilled(board): ");
+    c.log(boardFilled(board));
+    c.log("checkwin(bot)");
+    c.log(checkWin(board,bot));
+    c.log("checkwin(player)");
+    c.log(checkWin(board,player));
     if (uEUpdate.current) {
       uEUpdate.current = false;
       return;
     }
-    if (checkWin(board, bot) && isGameOver){
-      c.log("a");
-      setBotScore(currentScore => currentScore + 1);
-      setPlayer(player === x ? o : x);
-      setBot(bot === x ? o : x);
-      setBoard(initialBoard);
-    } else if(checkWin(board, player) && isGameOver){
-      c.log("b");
-      setPlayerScore(currentScore => currentScore + 1);
-      setPlayer(player === x ? o : x);
-      setBot(bot === x ? o : x);
-      setBoard(initialBoard);
-    } else if(boardFilled(board) && !checkWin(board, bot) && !checkWin(board, player)){
-      c.log("c");
-      setDrawScore(currentScore => currentScore + 1);
-      setPlayer(player === x ? o : x);
-      setBot(bot === x ? o : x);
-      setBoard(initialBoard);
-    }
-    if(isGameOver){
-      setIsGameOver(false);
+    if (!gameOverProcessed){
+      if (checkWin(board, bot) && isGameOver){
+        c.log("a");
+        setBotScore(currentScore => currentScore + 1);
+        setPlayer(player === x ? o : x);
+        setBot(bot === x ? o : x);
+        setGameOverProcessed(true);
+      } else if(checkWin(board, player) && isGameOver){
+        c.log("b");
+        setPlayerScore(currentScore => currentScore + 1);
+        setPlayer(player === x ? o : x);
+        setBot(bot === x ? o : x);
+        setGameOverProcessed(true);
+      } else if(boardFilled(board) && !checkWin(board, bot) && !checkWin(board, player)){
+        c.log("c");
+        setDrawScore(currentScore => currentScore + 1);
+        setPlayer(player === x ? o : x);
+        setBot(bot === x ? o : x);
+        setGameOverProcessed(true);
+      }
     }
   }, [isGameOver]);
 
@@ -136,6 +179,8 @@ const Board = ({ setPlayerScore, setDrawScore, setBotScore }) => {
       return;
     }
     if(!isGameOver && playerMove) {
+      c.log("board in getbotmove")
+      c.log(board);
       let newBoard = copyBoard(board);
       c.log("new board");
       c.log(newBoard);
