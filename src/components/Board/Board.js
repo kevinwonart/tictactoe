@@ -123,6 +123,7 @@ const Board = ({ setPlayerScore, setDrawScore, setBotScore }) => {
       c.log("player onclick board");
       c.log(newBoard);
       setBoard(newBoard);
+      setPlayerMove([row, col]);
     }
     c.log("board before checking condition after playermove");
     c.log(board);
@@ -130,10 +131,6 @@ const Board = ({ setPlayerScore, setDrawScore, setBotScore }) => {
       c.log("is spaghetti");
       setIsGameOver(true);
       return;
-    }
-    else {
-      c.log("here's the problem");
-      setPlayerMove([row, col]);
     }
   };
   
