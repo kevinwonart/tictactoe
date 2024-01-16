@@ -11,11 +11,47 @@
 
 .tile {
   position: relative;
-  top:75px;
-  left:75px;
-  width: 260px;
-  height: 260px;
+  top: 12vh;
+  left: 12vh;
+  width: 25vh;
+  height: 25vh;
   background: transparent;
   border: none;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
 }
+
+.tile img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit:contain;
+}
+
+@media (max-width: 1024px) {
+  .board{
+    width: 90vw;
+    height: 90vh;
+  }
+  .tile {
+    top: 10vw;
+    left: 9vh;
+    width: 25vw;
+    height: 23vh;
+  }
+}
+
+@media (max-width: 430px) {
+  .board{
+    width: 90vw;
+    height: 90vh;
+  }
+  .tile{
+    top: 10vw;
+    left: 9vh;
+    width: 10vh;
+    height: 10vh;
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+}
+

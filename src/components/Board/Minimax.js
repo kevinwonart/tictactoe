@@ -171,8 +171,6 @@ function getBotMove(board, bot){
         }
       }
     }
-    console.log("pass success");
-    console.log(bestMove);
     return bestMove;
   }else {
     let bestMove = { row: -1, col: -1 };
@@ -192,7 +190,6 @@ function getBotMove(board, bot){
         }
       }
     }
-    console.log("pass success");
     return bestMove;
   }
 }
@@ -214,11 +211,9 @@ function copyBoard(originalBoard) {
 
 export const setMiniMax = (board, bot) => {
   let botMove = "x";
-  if(bot === "/images/o.png"){
+  if(bot.includes("/images/o")){
     botMove = "o";
   }
-  console.log("MM Board: ");
-  console.log(board);
   let bestMove = { row: -1, col: -1 };
   return getBotMove(board, botMove);
 } 
